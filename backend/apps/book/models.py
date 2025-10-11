@@ -11,6 +11,7 @@ class Books(BaseModel):
         cover = models.ImageField(upload_to='covers/')
         release_year = models.IntegerField()
         category_id = models.ForeignKey('Category', on_delete=models.PROTECT)
+        image = models.ImageField(upload_to='books/', blank=True, null=True)
         new_column= models.CharField()
         price = models.DecimalField(max_digits=10, decimal_places=2)
         stock = models.IntegerField()
@@ -18,7 +19,15 @@ class Books(BaseModel):
         
         def __str__(self):
            return self.title
-        
+   
+   
+        @property
+        def image_url(self):
+            """Rasm URL ini olish"""
+            if self.image and hasattr(self.image, 'url'):
+             return self.image.url
+            return None
+
         
 class CustomUser(AbstractUser):
         phone_number = models.CharField(max_length=20, blank=True, null=True)
