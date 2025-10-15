@@ -1,158 +1,200 @@
-class ShoppingCart {
+import Helpers from '../utils/helpers.js';
+
+class Cart {
     constructor() {
-        this.items = this.loadFromLocalStorage();
-        this.updateCartUI();
+        this.cartItems = JSON.parse(localStorage.getItem('bookverse_cart')) || [];
+        this.cartCount = document.querySelector('.cart-count');
+        this.cartTotal = document.querySelector('.cart-total');
+        this.cartItemsContainer = document.querySelector('.cart-items');
+        this.init();
     }
 
-    addItem(bookId) {
-        // Book ma'lumotlarini API dan olish
-        this.getBookDetails(bookId).then(book => {
-            if (!book) return;
+    init() {
+        this.updateCartDisplay();
+        this.setupEventListeners();
+    }
 
-            const existingItem = this.items.find(item => item.id === book.id);
-            
-            if (existingItem) {
-                existingItem.quantity += 1;
-            } else {
-                this.items.push({
-                    id: book.id,
-                    title: book.title,
-                    price: book.price || 0,
-                    quantity: 1,
-                    author: book.author,
-                    image: book.image
-                });
-            }
-            
-            this.saveToLocalStorage();
-            this.updateCartUI();
-            this.showNotification(`${book.title} savatga qo'shildi`);
+    setupEventListeners() {
+        // Listen for add to cart events
+        document.addEventListener('bookAddedToCart', (e) => {
+            this.addItem(e.detail.book);
         });
+
+        // Listen for remove item events
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('remove-item')) {
+                const bookId = parseInt(e.target.dataset.bookId);
+                this.removeItem(bookId);
+            } else if (e.target.classList.contains('update-quantity')) {
+                const bookId = parseInt(e.target.dataset.bookId);
+                const change = parseInt(e.target.dataset.change);
+                this.updateQuantity(bookId, change);
+            }
+        });
+    }
+
+    addItem(book) {
+        const existingItem = this.cartItems.find(item => item.id === book.id);
+        
+        if (existingItem) {
+            existingItem.quantity += 1;
+        } else {
+            this.cartItems.push({
+                ...book,
+                quantity: 1
+            });
+        }
+
+        this.saveCart();
+        this.updateCartDisplay();
+        this.showAddToCartAnimation(book);
     }
 
     removeItem(bookId) {
-        this.items = this.items.filter(item => item.id !== bookId);
-        this.saveToLocalStorage();
-        this.updateCartUI();
-        this.showNotification('Mahsulot savatdan olib tashlandi');
+        this.cartItems = this.cartItems.filter(item => item.id !== bookId);
+        this.saveCart();
+        this.updateCartDisplay();
     }
 
-    updateQuantity(bookId, quantity) {
-        const item = this.items.find(item => item.id === bookId);
+    updateQuantity(bookId, change) {
+        const item = this.cartItems.find(item => item.id === bookId);
         if (item) {
-            item.quantity = Math.max(0, quantity);
+            item.quantity += change;
             if (item.quantity <= 0) {
                 this.removeItem(bookId);
             } else {
-                this.saveToLocalStorage();
-                this.updateCartUI();
+                this.saveCart();
+                this.updateCartDisplay();
             }
         }
     }
 
-    clear() {
-        this.items = [];
-        this.saveToLocalStorage();
-        this.updateCartUI();
+    saveCart() {
+        localStorage.setItem('bookverse_cart', JSON.stringify(this.cartItems));
     }
 
-    getItems() {
-        return this.items;
+    updateCartDisplay() {
+        this.updateCartCount();
+        this.updateCartTotal();
+        this.renderCartItems();
     }
 
-    getTotal() {
-        return this.items.reduce((total, item) => {
-            return total + (item.price * item.quantity);
-        }, 0);
-    }
-
-    getTotalItems() {
-        return this.items.reduce((sum, item) => sum + item.quantity, 0);
-    }
-
-    async getBookDetails(bookId) {
-        try {
-            const response = await fetch(`/api/books/${bookId}/`);
-            if (!response.ok) throw new Error('Network response was not ok');
-            return await response.json();
-        } catch (error) {
-            console.error('Kitob ma\'lumotlarini olishda xato:', error);
-            return null;
+    updateCartCount() {
+        if (this.cartCount) {
+            const totalItems = this.cartItems.reduce((sum, item) => sum + item.quantity, 0);
+            this.cartCount.textContent = totalItems;
+            this.cartCount.style.display = totalItems > 0 ? 'flex' : 'none';
         }
     }
 
-    loadFromLocalStorage() {
-        try {
-            return JSON.parse(localStorage.getItem('bookstore_cart')) || [];
-        } catch (error) {
-            console.error('LocalStorage dan ma\'lumot olishda xato:', error);
-            return [];
+    updateCartTotal() {
+        if (this.cartTotal) {
+            const total = this.cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            this.cartTotal.textContent = Helpers.formatPrice(total);
         }
     }
 
-    saveToLocalStorage() {
-        try {
-            localStorage.setItem('bookstore_cart', JSON.stringify(this.items));
-        } catch (error) {
-            console.error('LocalStorage ga saqlashda xato:', error);
-        }
-    }
+    renderCartItems() {
+        if (!this.cartItemsContainer) return;
 
-    updateCartUI() {
-        // Cart count yangilash
-        const cartCounts = document.querySelectorAll('.cart-count');
-        cartCounts.forEach(element => {
-            element.textContent = this.getTotalItems();
-        });
-
-        // Cart total yangilash
-        const cartTotal = document.getElementById('cart-total');
-        if (cartTotal) {
-            cartTotal.textContent = this.getTotal().toLocaleString() + ' so\'m';
+        if (this.cartItems.length === 0) {
+            this.cartItemsContainer.innerHTML = `
+                <div class="empty-cart">
+                    <div class="empty-cart-icon">📚</div>
+                    <h3>Your cart is empty</h3>
+                    <p>Add some books to get started!</p>
+                    <a href="books.html" class="btn-primary">Browse Books</a>
+                </div>
+            `;
+            return;
         }
 
-        // Agar cart sahifasi ochiq bo'lsa, uni yangilash
-        if (app && app.currentView === 'cart') {
-            app.renderCart();
-        }
-    }
-
-    showNotification(message) {
-        // Notification yaratish
-        const notification = document.createElement('div');
-        notification.className = 'notification';
-        notification.innerHTML = `
-            <div class="notification-content">
-                <i class="fas fa-check-circle"></i>
-                <span>${message}</span>
+        this.cartItemsContainer.innerHTML = this.cartItems.map(item => `
+            <div class="cart-item" data-book-id="${item.id}">
+                <div class="cart-item-image">
+                    <div class="book-cover-small" style="background: ${item.coverColor}"></div>
+                </div>
+                <div class="cart-item-details">
+                    <h4 class="cart-item-title">${item.title}</h4>
+                    <p class="cart-item-author">by ${item.author}</p>
+                    <p class="cart-item-price">${Helpers.formatPrice(item.price)}</p>
+                </div>
+                <div class="cart-item-controls">
+                    <div class="quantity-controls">
+                        <button class="update-quantity" data-book-id="${item.id}" data-change="-1">
+                            −
+                        </button>
+                        <span class="quantity">${item.quantity}</span>
+                        <button class="update-quantity" data-book-id="${item.id}" data-change="1">
+                            +
+                        </button>
+                    </div>
+                    <button class="remove-item" data-book-id="${item.id}">
+                        Remove
+                    </button>
+                </div>
+                <div class="cart-item-total">
+                    ${Helpers.formatPrice(item.price * item.quantity)}
+                </div>
             </div>
-        `;
+        `).join('');
+    }
 
-        // Notification stillari
-        notification.style.cssText = `
+    showAddToCartAnimation(book) {
+        // Create flying book animation
+        const animation = document.createElement('div');
+        animation.className = 'add-to-cart-animation';
+        animation.innerHTML = '📚';
+        animation.style.cssText = `
             position: fixed;
-            top: 100px;
-            right: 20px;
-            background: var(--white);
-            color: var(--text-color);
-            padding: 1rem 1.5rem;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            border-left: 4px solid var(--success-color);
+            font-size: 24px;
             z-index: 10000;
-            animation: slideInRight 0.3s ease-out;
+            pointer-events: none;
         `;
 
-        document.body.appendChild(notification);
+        document.body.appendChild(animation);
 
-        // 3 soniyadan keyin olib tashlash
+        // Get positions
+        const cartBtn = document.querySelector('.nav-link[href="cart.html"]');
+        const startRect = document.querySelector(`[data-book-id="${book.id}"]`)?.getBoundingClientRect() || 
+                         { left: window.innerWidth / 2, top: window.innerHeight / 2 };
+        const endRect = cartBtn?.getBoundingClientRect() || 
+                       { left: window.innerWidth - 100, top: 20 };
+
+        // Animate
+        animation.style.left = startRect.left + 'px';
+        animation.style.top = startRect.top + 'px';
+
         setTimeout(() => {
-            notification.style.animation = 'slideOutRight 0.3s ease-in';
-            setTimeout(() => {
-                if (notification.parentNode) {
-                    notification.parentNode.removeChild(notification);
-                }
-            }, 300);
-        }, 3000);
+            animation.style.transition = 'all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+            animation.style.left = endRect.left + 'px';
+            animation.style.top = endRect.top + 'px';
+            animation.style.transform = 'scale(0.5)';
+            animation.style.opacity = '0.5';
+        }, 100);
+
+        // Clean up
+        setTimeout(() => {
+            document.body.removeChild(animation);
+        }, 1000);
+    }
+
+    getCartSummary() {
+        const total = this.cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        const totalItems = this.cartItems.reduce((sum, item) => sum + item.quantity, 0);
+        
+        return {
+            items: this.cartItems,
+            total,
+            totalItems
+        };
+    }
+
+    clearCart() {
+        this.cartItems = [];
+        this.saveCart();
+        this.updateCartDisplay();
     }
 }
+
+export default Cart;

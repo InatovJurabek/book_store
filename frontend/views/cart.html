@@ -1,36 +1,298 @@
 <!DOCTYPE html>
-<html lang="uz">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Savat - Kitoblar Olami</title>
+    <title>Shopping Cart - BookVerse</title>
     <link rel="stylesheet" href="../styles/style.css">
-    <link rel="stylesheet" href="../styles/responsive.css">
     <link rel="stylesheet" href="../styles/components/header.css">
     <link rel="stylesheet" href="../styles/components/cards.css">
     <link rel="stylesheet" href="../styles/components/forms.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../styles/animations.css">
+    <link rel="stylesheet" href="../styles/responsive.css">
+    <style>
+        .cart-section {
+            padding: 120px 0 80px;
+        }
+
+        .cart-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 3rem;
+            align-items: start;
+        }
+
+        .cart-items {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .cart-item {
+            display: grid;
+            grid-template-columns: 80px 1fr auto auto;
+            gap: 1rem;
+            padding: 1.5rem;
+            border-bottom: 1px solid #f0f0f0;
+            align-items: center;
+        }
+
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+
+        .book-cover-small {
+            width: 60px;
+            height: 80px;
+            border-radius: 6px;
+        }
+
+        .cart-item-details h4 {
+            margin-bottom: 0.25rem;
+            color: var(--text-primary);
+        }
+
+        .cart-item-author {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .cart-item-price {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .quantity-controls button {
+            width: 30px;
+            height: 30px;
+            border: 1px solid #e0e0e0;
+            background: var(--white);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .quantity-controls button:hover {
+            background: var(--primary-color);
+            color: var(--white);
+            border-color: var(--primary-color);
+        }
+
+        .quantity {
+            min-width: 30px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .remove-item {
+            background: none;
+            border: none;
+            color: var(--accent-color);
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .remove-item:hover {
+            color: #e05555;
+        }
+
+        .cart-item-total {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+        }
+
+        .cart-summary {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 100px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .summary-total {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .empty-cart {
+            text-align: center;
+            padding: 3rem 2rem;
+        }
+
+        .empty-cart-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .empty-cart h3 {
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .empty-cart p {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .cart-container {
+                grid-template-columns: 1fr;
+            }
+
+            .cart-item {
+                grid-template-columns: 60px 1fr;
+                gap: 1rem;
+            }
+
+            .cart-item-controls,
+            .cart-item-total {
+                grid-column: 1 / -1;
+                justify-self: start;
+            }
+
+            .cart-summary {
+                position: static;
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- Navigation (index.html dagi kabi) -->
-    
-    <div class="breadcrumb">
-        <div class="breadcrumb-content">
-            <a href="index.html">Bosh Sahifa</a> / <span>Savat</span>
-        </div>
-    </div>
+    <!-- Navigation -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <a href="../index.html">BookVerse</a>
+                </div>
+                
+                <div class="nav-menu" id="nav-menu">
+                    <ul class="nav-list">
+                        <li class="nav-item"><a href="../index.html" class="nav-link">Home</a></li>
+                        <li class="nav-item"><a href="../views/books.html" class="nav-link">Books</a></li>
+                        <li class="nav-item"><a href="../views/categories.html" class="nav-link">Categories</a></li>
+                        <li class="nav-item">
+                            <a href="cart.html" class="nav-link active">
+                                Cart
+                                <span class="cart-count" style="display: none;">0</span>
+                            </a>
+                        </li>
+                        <li class="nav-item"><a href="profile.html" class="nav-link">Profile</a></li>
+                    </ul>
+                </div>
+                
+                <div class="nav-actions">
+                    <button class="btn-signin">Sign In</button>
+                    <div class="hamburger" id="hamburger">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
 
-    <main>
+    <!-- Cart Section -->
+    <section class="cart-section">
         <div class="container">
-            <h1>Shopping Cart</h1>
-            <div id="cart-content">
-                <!-- Cart content JavaScript tomonidan to'ldiriladi -->
+            <h1 class="section-title">Shopping Cart</h1>
+            
+            <div class="cart-container">
+                <div class="cart-items-container">
+                    <div class="cart-items" id="cart-items">
+                        <!-- Cart items will be populated by JavaScript -->
+                    </div>
+                </div>
+                
+                <div class="cart-summary">
+                    <h3>Order Summary</h3>
+                    <div class="summary-item">
+                        <span>Subtotal</span>
+                        <span class="cart-subtotal">$0.00</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Shipping</span>
+                        <span>Free</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Tax</span>
+                        <span class="cart-tax">$0.00</span>
+                    </div>
+                    <div class="summary-item summary-total">
+                        <span>Total</span>
+                        <span class="cart-total">$0.00</span>
+                    </div>
+                    
+                    <button class="btn-primary" style="width: 100%; margin-top: 1.5rem;" onclick="window.location.href='checkout.html'">
+                        Proceed to Checkout
+                    </button>
+                    
+                    <button class="btn-secondary" style="width: 100%; margin-top: 1rem;" id="continue-shopping">
+                        Continue Shopping
+                    </button>
+                </div>
             </div>
         </div>
-    </main>
+    </section>
 
-    <script src="../js/api.js"></script>
-    <script src="../js/components/Cart.js"></script>
-    <script src="../js/cart.js"></script>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 BookVerse. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/utils/helpers.js"></script>
+    <script src="js/components/Navigation.js"></script>
+    <script src="js/components/Cart.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const cart = new Cart();
+            const navigation = new Navigation();
+            
+            // Update summary when cart changes
+            document.addEventListener('bookAddedToCart', updateCartSummary);
+            document.addEventListener('DOMContentLoaded', updateCartSummary);
+            
+            function updateCartSummary() {
+                const summary = cart.getCartSummary();
+                const tax = summary.total * 0.08; // 8% tax
+                
+                document.querySelector('.cart-subtotal').textContent = Helpers.formatPrice(summary.total);
+                document.querySelector('.cart-tax').textContent = Helpers.formatPrice(tax);
+                document.querySelector('.cart-total').textContent = Helpers.formatPrice(summary.total + tax);
+            }
+            
+            // Continue shopping button
+            document.getElementById('continue-shopping').addEventListener('click', () => {
+                window.location.href = 'books.html';
+            });
+        });
+    </script>
 </body>
 </html>

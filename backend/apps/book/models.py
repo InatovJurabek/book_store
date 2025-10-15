@@ -11,7 +11,7 @@ class Books(BaseModel):
         cover = models.ImageField(upload_to='covers/')
         release_year = models.IntegerField()
         category_id = models.ForeignKey('Category', on_delete=models.PROTECT)
-        image = models.ImageField(upload_to='books/', blank=True, null=True)
+        # image = models.ImageField(upload_to='books/', blank=True, null=True)
         new_column= models.CharField()
         price = models.DecimalField(max_digits=10, decimal_places=2)
         stock = models.IntegerField()

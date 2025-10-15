@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - BookVerse</title>
+    <link rel="stylesheet" href="../styles/style.css">
+    <link rel="stylesheet" href="../styles/components/header.css">
+    <link rel="stylesheet" href="../styles/components/cards.css">
+    <link rel="stylesheet" href="../styles/components/forms.css">
+    <link rel="stylesheet" href="../styles/animations.css">
+    <link rel="stylesheet" href="../styles/responsive.css">
+    <style>
+        .profile-section {
+            padding: 120px 0 80px;
+            background: var(--background);
+        }
+
+        .profile-container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 3rem;
+        }
+
+        .profile-sidebar {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            font-weight: 600;
+        }
+
+        .profile-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-email {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .profile-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .profile-stat {
+            text-align: center;
+            padding: 1rem;
+            background: var(--background);
+            border-radius: var(--border-radius);
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .profile-nav {
+            list-style: none;
+        }
+
+        .profile-nav-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+
+        .profile-nav-link:hover,
+        .profile-nav-link.active {
+            background: rgba(108, 99, 255, 0.1);
+            color: var(--primary-color);
+        }
+
+        .profile-nav-icon {
+            font-size: 1.2rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .profile-content {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 2rem;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .section-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .orders-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .order-card {
+            border: 2px solid #f0f0f0;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .order-card:hover {
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .order-id {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .order-date {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .order-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-delivered {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+
+        .status-processing {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .status-shipped {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .order-items-preview {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .preview-item {
+            width: 60px;
+            height: 80px;
+            border-radius: 6px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .order-total {
+            text-align: right;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+        }
+
+        .wishlist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .address-card {
+            border: 2px solid #f0f0f0;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .address-card:hover {
+            border-color: var(--primary-color);
+        }
+
+        .address-card.default {
+            border-color: var(--primary-color);
+            background: rgba(108, 99, 255, 0.05);
+        }
+
+        .address-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+
+        .address-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .default-badge {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .address-actions {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-icon {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+
+        .btn-icon:hover {
+            background: #f0f0f0;
+        }
+
+        .preferences-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .preference-card {
+            border: 2px solid #f0f0f0;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            text-align: center;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .preference-card:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .preference-card.active {
+            border-color: var(--primary-color);
+            background: rgba(108, 99, 255, 0.05);
+        }
+
+        .preference-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        @media (max-width: 1024px) {
+            .profile-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .profile-sidebar {
+                position: static;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .order-header {
+                flex-direction: column;
+                align-items: start;
+                gap: 0.5rem;
+            }
+            
+            .wishlist-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+            
+            .preferences-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <a href="../index.html">BookVerse</a>
+                </div>
+                
+                <div class="nav-menu" id="nav-menu">
+                    <ul class="nav-list">
+                        <li class="nav-item"><a href="../index.html" class="nav-link">Home</a></li>
+                        <li class="nav-item"><a href="../views/books.html" class="nav-link">Books</a></li>
+                        <li class="nav-item"><a href="../views/categories.html" class="nav-link">Categories</a></li>
+                        <li class="nav-item">
+                            <a href="cart.html" class="nav-link">
+                                Cart
+                                <span class="cart-count" style="display: none;">0</span>
+                            </a>
+                        </li>
+                        <li class="nav-item"><a href="profile.html" class="nav-link active">Profile</a></li>
+                    </ul>
+                </div>
+                
+                <div class="nav-actions">
+                    <button class="btn-signin" id="auth-btn">Sign In</button>
+                    <div class="hamburger" id="hamburger">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Profile Section -->
+    <section class="profile-section">
+        <div class="container">
+            <div class="profile-container">
+                <!-- Sidebar -->
+                <div class="profile-sidebar">
+                    <div class="profile-header">
+                        <div class="profile-avatar" id="user-avatar">IJ</div>
+                        <div class="profile-name" id="user-name">Inatov Jurabek</div>
+                        <div class="profile-email" id="user-email">inatov.jurabek@gmail.com</div>
+                    </div>
+
+                    <div class="profile-stats">
+                        <div class="profile-stat">
+                            <span class="stat-value">12</span>
+                            <span class="stat-label">Orders</span>
+                        </div>
+                        <div class="profile-stat">
+                            <span class="stat-value">8</span>
+                            <span class="stat-label">Wishlist</span>
+                        </div>
+                    </div>
+
+                    <ul class="profile-nav">
+                        <li class="profile-nav-item">
+                            <a href="#orders" class="profile-nav-link active" data-section="orders">
+                                <span class="profile-nav-icon">📦</span>
+                                <span>My Orders</span>
+                            </a>
+                        </li>
+                        <li class="profile-nav-item">
+                            <a href="#wishlist" class="profile-nav-link" data-section="wishlist">
+                                <span class="profile-nav-icon">❤️</span>
+                                <span>Wishlist</span>
+                            </a>
+                        </li>
+                        <li class="profile-nav-item">
+                            <a href="#addresses" class="profile-nav-link" data-section="addresses">
+                                <span class="profile-nav-icon">🏠</span>
+                                <span>Addresses</span>
+                            </a>
+                        </li>
+                        <li class="profile-nav-item">
+                            <a href="#preferences" class="profile-nav-link" data-section="preferences">
+                                <span class="profile-nav-icon">⚙️</span>
+                                <span>Preferences</span>
+                            </a>
+                        </li>
+                        <li class="profile-nav-item">
+                            <a href="#settings" class="profile-nav-link" data-section="settings">
+                                <span class="profile-nav-icon">🔒</span>
+                                <span>Account Settings</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Content -->
+                <div class="profile-content">
+                    <!-- Orders Section -->
+                    <div class="content-section active" id="orders-section">
+                        <div class="section-header">
+                            <h2 class="section-title">My Orders</h2>
+                        </div>
+                        <div class="orders-grid">
+                            <!-- Order 1 -->
+                            <div class="order-card">
+                                <div class="order-header">
+                                    <div>
+                                        <div class="order-id">Order #BV-2024-001</div>
+                                        <div class="order-date">Placed on January 15, 2024</div>
+                                    </div>
+                                    <div class="order-status status-delivered">Delivered</div>
+                                </div>
+                                <div class="order-items-preview">
+                                    <div class="preview-item" style="background: linear-gradient(45deg, #6C63FF, #8B85FF)"></div>
+                                    <div class="preview-item" style="background: linear-gradient(45deg, #FFC300, #FFD54F)"></div>
+                                    <div class="preview-item" style="background: linear-gradient(45deg, #FF6B6B, #FF8E8E)"></div>
+                                </div>
+                                <div class="order-total">Total: $72.97</div>
+                            </div>
+
+                            <!-- Order 2 -->
+                            <div class="order-card">
+                                <div class="order-header">
+                                    <div>
+                                        <div class="order-id">Order #BV-2024-002</div>
+                                        <div class="order-date">Placed on February 3, 2024</div>
+                                    </div>
+                                    <div class="order-status status-shipped">Shipped</div>
+                                </div>
+                                <div class="order-items-preview">
+                                    <div class="preview-item" style="background: linear-gradient(45deg, #4ECDC4, #88D9D3)"></div>
+                                    <div class="preview-item" style="background: linear-gradient(45deg, #FF8E53, #FFA477)"></div>
+                                </div>
+                                <div class="order-total">Total: $56.98</div>
+                            </div>
+
+                            <!-- Order 3 -->
+                            <div class="order-card">
+                                <div class="order-header">
+                                    <div>
+                                        <div class="order-id">Order #BV-2024-003</div>
+                                        <div class="order-date">Placed on March 12, 2024</div>
+                                    </div>
+                                    <div class="order-status status-processing">Processing</div>
+                                </div>
+                                <div class="order-items-preview">
+                                    <div class="preview-item" style="background: linear-gradient(45deg, #9B59B6, #BD69DE)"></div>
+                                </div>
+                                <div class="order-total">Total: $29.99</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Wishlist Section -->
+                    <div class="content-section" id="wishlist-section">
+                        <div class="section-header">
+                            <h2 class="section-title">My Wishlist</h2>
+                        </div>
+                        <div class="wishlist-grid" id="wishlist-grid">
+                            <!-- Wishlist items will be populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Addresses Section -->
+                    <div class="content-section" id="addresses-section">
+                        <div class="section-header">
+                            <h2 class="section-title">Saved Addresses</h2>
+                            <button class="btn-primary">Add New Address</button>
+                        </div>
+                        <div class="addresses-list">
+                            <div class="address-card default">
+                                <div class="address-header">
+                                    <div class="address-name">Home Address</div>
+                                    <div class="default-badge">Default</div>
+                                </div>
+                                <div class="address-details">
+                                    <p>123 Main Street<br>
+                                    New York, NY 10001<br>
+                                    United States</p>
+                                    <p>Phone: +1 (555) 123-4567</p>
+                                </div>
+                                <div class="address-actions">
+                                    <button class="btn-icon">✏️</button>
+                                    <button class="btn-icon">🗑️</button>
+                                </div>
+                            </div>
+                            <div class="address-card">
+                                <div class="address-header">
+                                    <div class="address-name">Work Address</div>
+                                </div>
+                                <div class="address-details">
+                                    <p>456 Business Ave<br>
+                                    Suite 300<br>
+                                    New York, NY 10002<br>
+                                    United States</p>
+                                    <p>Phone: +1 (555) 987-6543</p>
+                                </div>
+                                <div class="address-actions">
+                                    <button class="btn-icon">✏️</button>
+                                    <button class="btn-icon">🗑️</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Preferences Section -->
+                    <div class="content-section" id="preferences-section">
+                        <div class="section-header">
+                            <h2 class="section-title">Reading Preferences</h2>
+                        </div>
+                        <div class="preferences-grid">
+                            <div class="preference-card active">
+                                <span class="preference-icon">📚</span>
+                                <h3>Fiction</h3>
+                                <p>Novels, short stories, and literary works</p>
+                            </div>
+                            <div class="preference-card">
+                                <span class="preference-icon">🔬</span>
+                                <h3>Science Fiction</h3>
+                                <p>Futuristic and speculative fiction</p>
+                            </div>
+                            <div class="preference-card active">
+                                <span class="preference-icon">💡</span>
+                                <h3>Self-Help</h3>
+                                <p>Personal development and growth</p>
+                            </div>
+                            <div class="preference-card">
+                                <span class="preference-icon">🕵️</span>
+                                <h3>Mystery</h3>
+                                <p>Thrillers and detective stories</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Settings Section -->
+                    <div class="content-section" id="settings-section">
+                        <div class="section-header">
+                            <h2 class="section-title">Account Settings</h2>
+                        </div>
+                        <form class="settings-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">First Name</label>
+                                    <input type="text" class="form-input" value="John" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Last Name</label>
+                                    <input type="text" class="form-input" value="Doe" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Email Address</label>
+                                <input type="email" class="form-input" value="john.doe@example.com" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Phone Number</label>
+                                <input type="tel" class="form-input" value="+1 (555) 123-4567" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Newsletter</label>
+                                <label class="form-checkbox">
+                                    <input type="checkbox" checked>
+                                    <span>Receive updates about new books and promotions</span>
+                                </label>
+                            </div>
+                            <button type="submit" class="btn-primary">Save Changes</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 BookVerse. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/utils/helpers.js"></script>
+    <script src="js/components/Navigation.js"></script>
+    <script src="js/components/BookCard.js"></script>
+    <script src="js/components/Cart.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const navigation = new Navigation();
+            const cart = new Cart();
+
+            // Profile navigation
+            const navLinks = document.querySelectorAll('.profile-nav-link');
+            const contentSections = document.querySelectorAll('.content-section');
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    
+                    // Update active nav link
+                    navLinks.forEach(nl => nl.classList.remove('active'));
+                    link.classList.add('active');
+                    
+                    // Show corresponding section
+                    const sectionId = link.dataset.section + '-section';
+                    contentSections.forEach(section => {
+                        section.classList.remove('active');
+                        if (section.id === sectionId) {
+                            section.classList.add('active');
+                        }
+                    });
+                });
+            });
+
+            // Load wishlist
+            function loadWishlist() {
+                const wishlistGrid = document.getElementById('wishlist-grid');
+                const wishlistBooks = [
+                    {
+                        id: 1,
+                        title: "The Midnight Library",
+                        author: "Matt Haig",
+                        price: 24.99,
+                        coverColor: "linear-gradient(45deg, #6C63FF, #8B85FF)"
+                    },
+                    {
+                        id: 2,
+                        title: "Atomic Habits",
+                        author: "James Clear",
+                        price: 27.99,
+                        coverColor: "linear-gradient(45deg, #FFC300, #FFD54F)"
+                    },
+                    {
+                        id: 3,
+                        title: "Project Hail Mary",
+                        author: "Andy Weir",
+                        price: 26.99,
+                        coverColor: "linear-gradient(45deg, #FF8E53, #FFA477)"
+                    }
+                ];
+
+                wishlistGrid.innerHTML = wishlistBooks.map(book => `
+                    <div class="book-card">
+                        <div class="book-cover" style="background: ${book.coverColor}"></div>
+                        <h3 class="book-title">${book.title}</h3>
+                        <p class="book-author">by ${book.author}</p>
+                        <div class="book-price">
+                            <span class="price">${Helpers.formatPrice(book.price)}</span>
+                            <button class="add-to-cart" data-book-id="${book.id}">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Preference cards
+            document.querySelectorAll('.preference-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    card.classList.toggle('active');
+                });
+            });
+
+            // Initialize
+            loadWishlist();
+        });
+    </script>
+</body>
+</html>

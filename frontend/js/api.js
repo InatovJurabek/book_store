@@ -1,108 +1,75 @@
-// API base URL ni sozlang
-const API_BASE_URL = 'http://localhost:8000/api';  // Development uchun
-// Yoki
-// const API_BASE_URL = '/api';  // Production uchun
-
 class BookAPI {
-    static async getBooks() {
-        try {
-            const response = await fetch(`${API_BASE_URL}/books/`);
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            const data = await response.json();
-            
-            // Agar results maydoni bo'lsa (pagination bo'lsa)
-            return data.results || data;
-        } catch (error) {
-            console.error('Kitoblarni olishda xato:', error);
-            this.showError('Kitoblarni yuklashda xato yuz berdi');
-            return [];
-        }
-    }
-
-    static async getBookDetail(id) {
-        try {
-            const response = await fetch(`${API_BASE_URL}/books/${id}/`);
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            return await response.json();
-        } catch (error) {
-            console.error('Kitob ma\'lumotlarini olishda xato:', error);
-            this.showError('Kitob ma\'lumotlarini yuklashda xato');
-            return null;
-        }
-    }
-
-    static async getCategories() {
-        try {
-            const response = await fetch(`${API_BASE_URL}/categories/`);
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            const data = await response.json();
-            return data.results || data;
-        } catch (error) {
-            console.error('Kategoriyalarni olishda xato:', error);
-            return [];
-        }
-    }
-
-    static async searchBooks(query) {
-        try {
-            const response = await fetch(`${API_BASE_URL}/books/?search=${encodeURIComponent(query)}`);
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            const data = await response.json();
-            return data.results || data;
-        } catch (error) {
-            console.error('Qidiruvda xato:', error);
-            return [];
-        }
-    }
-
-    static async createOrder(orderData) {
-        try {
-            const response = await fetch(`${API_BASE_URL}/orders/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': this.getCSRFToken(),
-                },
-                body: JSON.stringify(orderData)
-            });
-            
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            return await response.json();
-        } catch (error) {
-            console.error('Buyurtma yaratishda xato:', error);
-            this.showError('Buyurtma yaratishda xato yuz berdi');
-            return null;
-        }
-    }
-
-    static getCSRFToken() {
-        // CSRF token ni olish
-        const cookieValue = document.cookie
-            .split('; ')
-            .find(row => row.startsWith('csrftoken='))
-            ?.split('=')[1];
-        return cookieValue;
-    }
-
-    static showError(message) {
-        // Error notification ko'rsatish
-        const notification = document.createElement('div');
-        notification.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #e74c3c;
-            color: white;
-            padding: 1rem 1.5rem;
-            border-radius: 8px;
-            z-index: 10000;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        `;
-        notification.textContent = message;
-        document.body.appendChild(notification);
+    static async getFeaturedBooks() {
+        await new Promise(resolve => setTimeout(resolve, 500));
         
-        setTimeout(() => {
-            notification.remove();
-        }, 5000);
+        return [
+            {
+                id: 1,
+                title: "The Midnight Library",
+                author: "Matt Haig",
+                price: 24.99,
+                coverColor: "linear-gradient(45deg, #6C63FF, #8B85FF)",
+                rating: 4.5
+            },
+            {
+                id: 2,
+                title: "Atomic Habits",
+                author: "James Clear",
+                price: 27.99,
+                coverColor: "linear-gradient(45deg, #FFC300, #FFD54F)",
+                rating: 4.8
+            },
+            {
+                id: 3,
+                title: "The Alchemist",
+                author: "Paulo Coelho",
+                price: 19.99,
+                coverColor: "linear-gradient(45deg, #FF6B6B, #FF8E8E)",
+                rating: 4.7
+            },
+            {
+                id: 4,
+                title: "Dune",
+                author: "Frank Herbert",
+                price: 29.99,
+                coverColor: "linear-gradient(45deg, #4ECDC4, #88D9D3)",
+                rating: 4.6
+            },
+            {
+                id: 5,
+                title: "Project Hail Mary",
+                author: "Andy Weir",
+                price: 26.99,
+                coverColor: "linear-gradient(45deg, #FF8E53, #FFA477)",
+                rating: 4.9
+            },
+            {
+                id: 6,
+                title: "The Silent Patient",
+                author: "Alex Michaelides",
+                price: 22.99,
+                coverColor: "linear-gradient(45deg, #9B59B6, #BD69DE)",
+                rating: 4.4
+            },
+            {
+                id: 7,
+                title: "Educated",
+                author: "Tara Westover",
+                price: 21.99,
+                coverColor: "linear-gradient(45deg, #3498DB, #5DADE2)",
+                rating: 4.7
+            },
+            {
+                id: 8,
+                title: "Where the Crawdads Sing",
+                author: "Delia Owens",
+                price: 25.99,
+                coverColor: "linear-gradient(45deg, #E74C3C, #EC7063)",
+                rating: 4.8
+            }
+        ];
     }
 }
+
+
+export default BookAPI;

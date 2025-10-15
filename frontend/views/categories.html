@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Categories - BookVerse</title>
+    <link rel="stylesheet" href="../styles/style.css">
+    <link rel="stylesheet" href="../styles/components/header.css">
+    <link rel="stylesheet" href="../styles/components/cards.css">
+    <link rel="stylesheet" href="../styles/animations.css">
+    <link rel="stylesheet" href="../styles/responsive.css">
+    <style>
+        .categories-page {
+            padding: 120px 0 80px;
+        }
+
+        .category-hero {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .category-hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .category-hero p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .categories-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .category-large {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            padding: 2.5rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .category-large:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .category-large::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .category-icon-large {
+            font-size: 3rem;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary-color), #8B85FF);
+            border-radius: 50%;
+            color: white;
+        }
+
+        .category-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .category-description {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .category-stats {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .category-books-preview {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .preview-book {
+            height: 80px;
+            border-radius: 6px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .preview-book:nth-child(2) {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .preview-book:nth-child(3) {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .explore-btn {
+            width: 100%;
+            margin-top: 1.5rem;
+            padding: 12px;
+            background: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .explore-btn:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .categories-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .category-hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .category-books-preview {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <a href="../index.html">BookVerse</a>
+                </div>
+                
+                <div class="nav-menu" id="nav-menu">
+                    <ul class="nav-list">
+                        <li class="nav-item"><a href="../index.html" class="nav-link">Home</a></li>
+                        <li class="nav-item"><a href="../views/books.html" class="nav-link">Books</a></li>
+                        <li class="nav-item"><a href="../views/categories.html" class="nav-link active">Categories</a></li>
+                        <li class="nav-item">
+                            <a href="cart.html" class="nav-link">
+                                Cart
+                                <span class="cart-count" style="display: none;">0</span>
+                            </a>
+                        </li>
+                        <li class="nav-item"><a href="profile.html" class="nav-link">Profile</a></li>
+                    </ul>
+                </div>
+                
+                <div class="nav-actions">
+                    <button class="btn-signin">Sign In</button>
+                    <div class="hamburger" id="hamburger">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Categories Section -->
+    <section class="categories-page">
+        <div class="container">
+            <div class="category-hero">
+                <h1>Explore Categories</h1>
+                <p>Dive into our carefully curated collection of books across various genres and topics</p>
+            </div>
+
+            <div class="categories-container">
+                <!-- Fiction Category -->
+                <div class="category-large fade-in">
+                    <div class="category-header">
+                        <div class="category-icon-large">📚</div>
+                        <h3 class="category-title">Fiction & Literature</h3>
+                    </div>
+                    <p class="category-description">
+                        Immerse yourself in captivating stories, from contemporary novels to timeless classics. 
+                        Explore worlds created by master storytellers.
+                    </p>
+                    <div class="category-stats">
+                        <div class="stat">
+                            <span class="stat-number">1,247</span>
+                            <span class="stat-label">Books</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">89</span>
+                            <span class="stat-label">New This Month</span>
+                        </div>
+                    </div>
+                    <div class="category-books-preview">
+                        <div class="preview-book"></div>
+                        <div class="preview-book"></div>
+                        <div class="preview-book"></div>
+                    </div>
+                    <button class="explore-btn" onclick="window.location.href='books.html?category=fiction'">
+                        Explore Fiction
+                    </button>
+                </div>
+
+                <!-- Science Fiction -->
+                <div class="category-large fade-in" data-delay="100">
+                    <div class="category-header">
+                        <div class="category-icon-large">🚀</div>
+                        <h3 class="category-title">Science Fiction</h3>
+                    </div>
+                    <p class="category-description">
+                        Journey to distant galaxies, explore futuristic technologies, and encounter alien civilizations 
+                        in our extensive sci-fi collection.
+                    </p>
+                    <div class="category-stats">
+                        <div class="stat">
+                            <span class="stat-number">856</span>
+                            <span class="stat-label">Books</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">45</span>
+                            <span class="stat-label">New This Month</span>
+                        </div>
+                    </div>
+                    <div class="category-books-preview">
+                        <div class="preview-book"></div>
+                        <div class="preview-book"></div>
+                        <div class="preview-book"></div>
+                    </div>
+                    <button class="explore-btn" onclick="window.location.href='books.html?category=sci-fi'">
+                        Explore Sci-Fi
+                    </button>
+                </div>
+
+                <!-- Mystery & Thriller -->
+                <div class="category-large fade-in" data-delay="200">
+                    <div class="category-header">
+                        <div class="category-icon-large">🕵️</div>
+                        <h3 class="category-title">Mystery & Thriller</h3>
+                    </div>
+                    <p class="category-description">
+                        Unravel complex puzzles, solve gripping mysteries, and experience heart-pounding suspense 
+                        with our thriller collection.
+                    </p>
+                    <div class="category-stats">
+                        <div class="stat">
+                            <span class="stat-number">723</span>
+                            <span class="stat-label">Books</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">67</span>
+                            <span class="stat-label">New This Month</span>
+                        </div>
+                    </div>
+                    <div class="category-books-preview">
+                        <div class="preview-book"></div>
+                        <div class="preview-book"></div>
+                        <div class="preview-book"></div>
+                    </div>
+                    <button class="explore-btn" onclick="window.location.href='books.html?category=mystery'">
+                        Explore Mystery
+                    </button>
+                </div>
+
+                <!-- Self-Help -->
+                <div class="category-large fade-in" data-delay="300">
+                    <div class="category-header">
+                        <div class="category-icon-large">💡</div>
+                        <h3 class="category-title">Personal Growth</h3>
+                    </div>
+                    <p class="category-description">
+                        Transform your life with books on productivity, mindfulness, relationships, and personal 
+                        development from renowned experts.
+                    </p>
+                    <div class="category-stats">
+                        <div class="stat">
+                            <span class="stat-number">934</span>
+                            <span class="stat-label">Books</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">78</span>
+                            <span class="stat-label">New This Month</span>
+                        </div>
+                    </div>
+                    <div class="category-books-preview">
+                        <div class="preview-book"></div>
+                        <div class="preview-book"></div>
+                        <div class="preview-book"></div>
+                    </div>
+                    <button class="explore-btn" onclick="window.location.href='books.html?category=self-help'">
+                        Explore Growth
+                    </button>
+                </div>
+
+                <!-- Biography -->
+                <div class="category-large fade-in" data-delay="400">
+                    <div class="category-header">
+                        <div class="category-icon-large">👤</div>
+                        <h3 class="category-title">Biography & Memoir</h3>
+                    </div>
+                    <p class="category-description">
+                        Discover the lives of extraordinary people through authentic stories, personal journeys, 
+                        and inspiring life experiences.
+                    </p>
+                    <div class="category-stats">
+                        <div class="stat">
+                            <span class="stat-number">612</span>
+                            <span class="stat-label">Books</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">34</span>
+                            <span class="stat-label">New This Month</span>
+                        </div>
+                    </div>
+                    <div class="category-books-preview">
+                        <div class="preview-book"></div>
+                        <div class="preview-book"></div>
+                        <div class="preview-book"></div>
+                    </div>
+                    <button class="explore-btn" onclick="window.location.href='books.html?category=biography'">
+                        Explore Biographies
+                    </button>
+                </div>
+
+                <!-- Business -->
+                <div class="category-large fade-in" data-delay="500">
+                    <div class="category-header">
+                        <div class="category-icon-large">💼</div>
+                        <h3 class="category-title">Business & Finance</h3>
+                    </div>
+                    <p class="category-description">
+                        Master the world of business, entrepreneurship, investing, and economic trends with 
+                        insights from industry leaders.
+                    </p>
+                    <div class="category-stats">
+                        <div class="stat">
+                            <span class="stat-number">578</span>
+                            <span class="stat-label">Books</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">56</span>
+                            <span class="stat-label">New This Month</span>
+                        </div>
+                    </div>
+                    <div class="category-books-preview">
+                        <div class="preview-book"></div>
+                        <div class="preview-book"></div>
+                        <div class="preview-book"></div>
+                    </div>
+                    <button class="explore-btn" onclick="window.location.href='books.html?category=business'">
+                        Explore Business
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 BookVerse. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/utils/animation.js"></script>
+    <script src="js/components/Navigation.js"></script>
+    <script src="js/components/Cart.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            new Navigation();
+            new Cart();
+        });
+    </script>
+</body>
+</html>

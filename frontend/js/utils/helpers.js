@@ -1,16 +1,12 @@
-// Utility funksiyalari
+// Utility functions
 class Helpers {
     static formatPrice(price) {
-        if (!price && price !== 0) return 'Narx belgilanmagan';
-        return price.toLocaleString() + ' so\'m';
+        return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD'
+        }).format(price);
     }
-
-    static truncateText(text, maxLength = 100) {
-        if (!text) return '';
-        if (text.length <= maxLength) return text;
-        return text.substring(0, maxLength) + '...';
-    }
-
+    
     static debounce(func, wait) {
         let timeout;
         return function executedFunction(...args) {
@@ -22,104 +18,64 @@ class Helpers {
             timeout = setTimeout(later, wait);
         };
     }
-
-    static getQueryParam(name) {
-        const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get(name);
+    
+    static truncateText(text, maxLength) {
+        if (text.length <= maxLength) return text;
+        return text.substring(0, maxLength) + '...';
     }
-
-    static setQueryParam(name, value) {
-        const urlParams = new URLSearchParams(window.location.search);
-        if (value) {
-            urlParams.set(name, value);
-        } else {
-            urlParams.delete(name);
-        }
-        window.history.replaceState({}, '', `${window.location.pathname}?${urlParams}`);
+    
+    static getRandomColor() {
+        const colors = [
+            'linear-gradient(45deg, #FF6B6B, #FF8E8E)',
+            'linear-gradient(45deg, #6C63FF, #8B85FF)',
+            'linear-gradient(45deg, #FFC300, #FFD54F)',
+            'linear-gradient(45deg, #4ECDC4, #88D9D3)',
+            'linear-gradient(45deg, #FF8E53, #FFA477)',
+            'linear-gradient(45deg, #9B59B6, #BD69DE)'
+        ];
+        return colors[Math.floor(Math.random() * colors.length)];
     }
-
-    static showLoading() {
-        // Loading indicator ko'rsatish
-        const loading = document.createElement('div');
-        loading.id = 'global-loading';
-        loading.innerHTML = `
-            <div class="loading-spinner">
-                <i class="fas fa-spinner fa-spin"></i>
-                <p>Yuklanmoqda...</p>
-            </div>
-        `;
-        loading.style.cssText = `
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.9);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-        `;
-        document.body.appendChild(loading);
+    
+    
+    // Add these methods to the Helpers class
+    static formatDate(dateString) {
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        return new Date(dateString).toLocaleDateString('en-US', options);
     }
-
-    static hideLoading() {
-        const loading = document.getElementById('global-loading');
-        if (loading) {
-            loading.remove();
-        }
+    
+    static generateOrderId() {
+        return 'BV-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9).toUpperCase();
     }
-
+    
     static validateEmail(email) {
         const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return re.test(email);
     }
-
+    
     static validatePhone(phone) {
-        const re = /^\+?998[0-9]{9}$/;
-        return re.test(phone.replace(/\s/g, ''));
+        const re = /^\+?[\d\s\-\(\)]{10,}$/;
+        return re.test(phone);
     }
+    
+    static getInitials(name) {
+        return name.split(' ').map(n => n[0]).join('').toUpperCase();
+    }
+    
+    
 }
 
-// LocalStorage helperlari
-class Storage {
-    static set(key, value) {
-        try {
-            localStorage.setItem(key, JSON.stringify(value));
-            return true;
-        } catch (error) {
-            console.error('LocalStorage ga saqlashda xato:', error);
-            return false;
-        }
-    }
+export default Helpers;
 
-    static get(key, defaultValue = null) {
-        try {
-            const item = localStorage.getItem(key);
-            return item ? JSON.parse(item) : defaultValue;
-        } catch (error) {
-            console.error('LocalStorage dan olishda xato:', error);
-            return defaultValue;
-        }
-    }
 
-    static remove(key) {
-        try {
-            localStorage.removeItem(key);
-            return true;
-        } catch (error) {
-            console.error("LocalStorage dan o'chirishda xato:", error);
-            return false;
-        }
-    }
 
-    static clear() {
-        try {
-            localStorage.clear();
-            return true;
-        } catch (error) {
-            console.error('LocalStorage ni tozalashda xato:', error);
-            return false;
-        }
-    }
-}
+
+
+
+
+
+
+
+
+
+
+
